@@ -1,0 +1,150 @@
+---
+apiVersion: "v1"
+kind: "Template"
+metadata:
+  annotations:
+    fabric8.bot/summary: "CXF REST using CDI deployed as WAR"
+    description: "# War CXF CDI Servlet QuickStart\r\n\r\nThis quick start demonstrates\
+      \ how to create a RESTful (JAX-RS) web service using Apache CXF and expose it\
+      \ using CDI running in servlet container as a war\r\n\r\nThe REST service provides\
+      \ a customer service that supports the following operations\r\n \r\n- PUT /api/customerservice/customers/\
+      \ - to create or update a customer\r\n- GET /api/customerservice/customers/{id}\
+      \ - to view a customer with the given id\r\n- DELETE /api/customerservice/customers/{id}\
+      \ - to delete a customer with the given id\r\n- GET /api/customerservice/orders/{orderId}\
+      \ - to view an order with the given id\r\n- GET /api/customerservice/orders/{orderId}/products/{productId}\
+      \ - to view a specific product on an order with the given id\r\n\r\nWhen the\
+      \ application is deployed, you can access the REST service using a web browser.\r\
+      \n\r\n\r\n### Building\r\n\r\nThe example can be built with\r\n\r\n    mvn clean\
+      \ install\r\n\r\n\r\n### Running the example locally\r\n\r\nThe example can\
+      \ be run locally using the following Maven goal:\r\n\r\n    mvn jetty:run\r\n\
+      \r\nThen you can access the service from a web browser using the following url:\r\
+      \n\r\n    http://localhost:8080/\r\n\r\n\r\n### Running the example in fabric8\r\
+      \n\r\nIt is assumed a running Kubernetes platform is already running. If not\
+      \ you can find details how to [get started](http://fabric8.io/guide/getStarted/index.html).\r\
+      \n\r\nThe example can be built and deployed using a single goal:\r\n\r\n   \
+      \ mvn -Pf8-local-deploy\r\n\r\nWhen the example runs in fabric8, you can use\
+      \ the OpenShift client tool to inspect the status\r\n\r\nTo list all the running\
+      \ pods:\r\n\r\n    oc get pods\r\n\r\nThen find the name of the pod that runs\
+      \ this quickstart, and output the logs from the running pods with:\r\n\r\n \
+      \   oc logs <name of pod>\r\n\r\nYou can also use the fabric8 [web console](http://fabric8.io/guide/console.html)\
+      \ to manage the\r\nrunning pods, and view logs and much more.\r\n\r\n\r\n###\
+      \ Access services using a web browser\r\n\r\nYou can use any browser to perform\
+      \ a HTTP GET.  This allows you to very easily test a few of the RESTful services\
+      \ we defined:\r\n\r\nNotice: As it depends on your OpenShift setup, the hostname\
+      \ (route) might vary. Verify with `oc get routes` which\r\nhostname is valid\
+      \ for you\r\n\r\nUse this URL to display the root of the REST service, which\
+      \ also allows to access the WADL of the service:\r\n\r\n    http://war-cxf-cdi-servlet-default.vagrant.f8\r\
+      \n\r\nUse this URL to display the XML representation for customer 123:\r\n\r\
+      \n    http://war-cxf-cdi-servlet-default.vagrant.f8/api/customerservice/customers/123\r\
+      \n\r\nYou can also access the XML representation for order 223 ...\r\n\r\n \
+      \   http://war-cxf-cdi-servlet-default.vagrant.f8/api/customerservice/orders/223\r\
+      \n\r\n**Note:** if you use Safari, you will only see the text elements but not\
+      \ the XML tags - you can view the entire document with 'View Source'\r\n\r\n\
+      \r\n### To run a command-line utility:\r\n\r\nYou can use a command-line utility,\
+      \ such as cURL or wget, to perform the HTTP requests.  We have provided a few\
+      \ files with sample XML representations in `src/test/resources`, so we will\
+      \ use those for testing our services.\r\n\r\n1. Open a command prompt and change\
+      \ directory to `cxf-cdi`.\r\n2. Run the following curl commands (curl commands\
+      \ may not be available on all platforms):\r\n\r\n    * Create a customer\r\n\
+      \r\n            curl -X POST -T src/test/resources/add_customer.xml -H \"Content-Type:\
+      \ text/xml\" http://war-cxf-cdi-servlet-default.vagrant.f8/api/customerservice/customers\r\
+      \n\r\n    * Retrieve the customer instance with id 123\r\n\r\n            curl\
+      \ http://war-cxf-cdi-servlet-default.vagrant.f8/api/customerservice/customers/123\r\
+      \n\r\n    * Update the customer instance with id 123\r\n\r\n            curl\
+      \ -X PUT -T src/test/resources/update_customer.xml -H \"Content-Type: text/xml\"\
+      \ http://war-cxf-cdi-servlet-default.vagrant.f8/api/customerservice/customers\r\
+      \n\r\n    * Delete the customer instance with id 123\r\n\r\n             curl\
+      \ -X DELETE http://war-cxf-cdi-servlet-default.vagrant.f8/api/customerservice/customers/123\r\
+      \n\r\n\r\n### More details\r\n\r\nYou can find more details about running this\
+      \ [quickstart](http://fabric8.io/guide/quickstarts/running.html) on the website.\
+      \ This also includes instructions how to change the Docker image user and registry.\r\
+      \n\r\n"
+    fabric8.bot/iconUrl: "img/icons/tomcat.svg"
+  labels: {}
+  name: "bot"
+objects:
+- apiVersion: "v1"
+  kind: "Service"
+  metadata:
+    annotations:
+      fabric8.io/iconUrl: "img/icons/tomcat.svg"
+    labels:
+      provider: "fabric8"
+      project: "bot"
+      version: "1.0-SNAPSHOT"
+      group: "quickstarts"
+    name: "bot"
+  spec:
+    deprecatedPublicIPs: []
+    externalIPs: []
+    ports:
+    - port: 80
+      protocol: "TCP"
+      targetPort: 8080
+    selector:
+      project: "bot"
+      provider: "fabric8"
+      group: "quickstarts"
+    type: "LoadBalancer"
+- apiVersion: "v1"
+  kind: "ReplicationController"
+  metadata:
+    annotations:
+      fabric8.io/iconUrl: "img/icons/tomcat.svg"
+    labels:
+      provider: "fabric8"
+      project: "bot"
+      version: "1.0-SNAPSHOT"
+      group: "quickstarts"
+    name: "bot"
+  spec:
+    replicas: 1
+    selector:
+      provider: "fabric8"
+      project: "bot"
+      version: "1.0-SNAPSHOT"
+      group: "quickstarts"
+    template:
+      metadata:
+        annotations: {}
+        labels:
+          provider: "fabric8"
+          project: "bot"
+          version: "1.0-SNAPSHOT"
+          group: "quickstarts"
+      spec:
+        containers:
+        - args: []
+          command: []
+          env:
+          - name: "KUBERNETES_NAMESPACE"
+            valueFrom:
+              fieldRef:
+                fieldPath: "metadata.namespace"
+          image: "fabric8/bot:1.0-SNAPSHOT"
+          name: "bot"
+          ports:
+          - containerPort: 8080
+            name: "http"
+          - containerPort: 8778
+            name: "jolokia"
+          readinessProbe:
+            httpGet:
+              httpHeaders: []
+              path: "/"
+              port: 8080
+            initialDelaySeconds: 5
+            timeoutSeconds: 30
+          resources:
+            limits:
+              cpu: "0"
+              memory: "0"
+            requests:
+              cpu: "0"
+              memory: "0"
+          securityContext: {}
+          volumeMounts: []
+        imagePullSecrets: []
+        nodeSelector: {}
+        volumes: []
+parameters: []

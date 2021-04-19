@@ -1,0 +1,1 @@
+CXF REST using CDI deployed as WAR
